@@ -1,0 +1,9 @@
+pre-push:
+  jobs:
+    - run: bun test
+      skip: false
+
+pre-commit:
+  jobs:
+    - name: linter
+      run: npm run lint
