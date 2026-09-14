@@ -8,7 +8,7 @@ if (require.main === module) {
 }
 
 export async function StudentLogin(): Promise<Student> {
-  const url = await input({ message: "Enter the school's instance URL:", required: true, default: "https://demo.index-education.net/pronote/" })
+  const url = await input({ message: "Enter the school's instance URL:", required: true, default: "https://hpdemofr.pronote-campus.net/hp/" })
   const instance = await Instance.createFromURL(url);
   const authenticator =  new StudentAuthenticator(instance);
 
