@@ -1,89 +1,63 @@
+export type FonctionsParametresRawResponse = {
+  parametreGeneral: {
+    urlLogo: string;
 
-export type OldFonctionsParametresRawResponse = {
-  identifiantNav:        string;
-  estAfficheDansENT:     boolean;
-  pourNouvelleCaledonie: boolean;
-  tableauVersion:        number[];
-  urlConfidentialite:    string;
-  DateServeurHttp:       string;
-  DateDemo:              string;
-  General: {
-    urlSiteIndexEducation:                           string;
-    urlSiteInfosHebergement:                         string;
-    nomProduit:                                      string;
-    langue:                                          string;
-    langID:                                          string;
-    listeLangues:                                    Array<{ langID: number; description: string }>;
-    estHebergeEnFrance:                              boolean;
-    avecForum:                                       boolean;
-    UrlAide:                                         string;
-    urlAccesVideos:                                  string;
-    urlAccesTwitter:                                 string;
-    urlFAQEnregistrementDoubleAuth:                  string;
-    urlTutoVideoSecurite:                            string;
-    urlTutoEnregistrerAppareils:                     string;
-    urlCanope:                                       string;
-    accessibiliteNonConforme:                        boolean;
-    urlDeclarationAccessibilite:                     string;
-    NomEtablissement:                                string;
-    NomEtablissementConnexion:                       string;
-    numeroPremiereSemaine:                           number;
-    AnneeScolaire:                                   string;
-    dateDebutPremierCycle:                           string;
-    PremierLundi:                                    string;
-    PremiereDate:                                    string;
-    DerniereDate:                                    string;
-    PlacesParJour:                                   number;
-    PlacesParHeure:                                  number;
-    DureeSequence:                                   number;
-    PlaceDemiJourneeAbsence:                         number;
-    valeurDefautPresenceDispense:                    boolean;
-    activationDemiPension:                           boolean;
-    JourOuvre:                                       string;
-    JoursOuvres:                                     number[];
-    ActivationMessagerieEntreParents:                boolean;
-    GestionParcoursExcellence:                       boolean;
-    activerBlog:                                     boolean;
-    joursOuvresParCycle:                             number;
-    premierJourSemaine:                              number;
-    DomainesFrequences:                              number[];
-    LibellesFrequences:                              string[];
-    BaremeNotation:                                  number;
-    BaremeMaxDevoirs:                                number;
-    AvecHeuresPleinesApresMidi:                      boolean;
-    NbJDecalageDatePublicationParDefaut:             number;
-    NbJDecalagePublicationAuxParents:                number;
-    AvecAffichageDecalagePublicationNotesAuxParents: boolean;
-    AvecAffichageDecalagePublicationEvalsAuxParents: boolean;
-    ListeNiveauxDAcquisitions:                       rawSkillLevel[];
-    AvecEvaluationHistorique:                        boolean;
-    minBaremeQuestionQCM:                            number;
-    maxBaremeQuestionQCM:                            number;
-    maxNbPointQCM:                                   number;
-    maxNiveauQCM:                                    number;
-    AvecRecuperationInfosConnexion:                  boolean;
-    parentAutoriseChangerMDP:                        boolean;
-    listeJoursFeries: Array<{
-      label:     string;
-      dateDebut: Date;
-      dateFin:   Date;
+    avecForum: boolean;
+    UrlAide: string;
+
+    urlSiteIndexEducation: string;
+    urlInfosHebergement: string;
+
+    accessibiliteNonConforme: boolean;
+    urlDeclarationAccessibilite: string;
+    urlPolitiqueConfidentialite: string;
+
+    urlFAQEnregistrementDoubleAuth: string;
+    urlTutoVideoSecurite: string;
+    urlTutoEnregistrerAppareils: string;
+
+    precisionNotation: number;
+
+    baremeNotation: number;
+    baremeMaxDevoirs: number;
+
+    minBaremeQuestionQCM: number;
+    maxBaremeQuestionQCM: number;
+    maxNbPointQCM: number;
+    maxNiveauQCM: number;
+
+    AvecRecuperationInfosConnexion: boolean;
+
+    estHebergeEnFrance: boolean;
+
+    langue: string;
+    langID: number;
+    listeLangues: Array<{
+      langID: number;
+      description: string;
     }>;
-    ListePeriodes: Array<{
-      periodeNotation: number;
-      dateDebut:       Date;
-      dateFin:         Date;
-      label:           string;
-      id:              string;
+
+    PremierLundi: string;
+    DerniereDate: string;
+
+    JoursOuvres: string;
+
+    PlacesParHeure: number;
+    PlacesParJour: number;
+    DureeSequence: number;
+  };
+
+  parametres: {
+    Divers: Array<{
+      NomEtablissement: string;
     }>;
-    urlLogo:                              string;
-    recreations:                          Array<{ place: number; label: string }>;
-    tailleMaxEnregistrementAudioRenduTAF: number;
+
+    PlanningGeneral: Array<{
+      NumeroPremiereSemaine: number;
+    }>;
   };
 }
 
-export type FonctionsParametresRawResponse = {
-  
-}
 
 interface rawSkillLevel {
   G:                    number;
