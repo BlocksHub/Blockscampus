@@ -1,0 +1,38 @@
+import {Request} from "@/structures/network/Request.ts";
+import { Response } from "@/structures/network/Response.ts";
+
+export class RequestManager {
+  public requestNumber: number = 0;
+
+  private queue: Array<() => Promise<unknown>> = [];
+
+  private isProcessingQueue: boolean = false;
+
+  public enqueueRequest<T>(request: Request): Promise<Response<T>> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          this.requestNumber = this.requestNumber + 2
+          const result = await request.send<T>();
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      });
+      this.processQueue();
+    });
+  }
+
+  private async processQueue() {
+    if (this.isProcessingQueue) return;
+    this.isProcessingQueue = true;
+
+    while (this.queue.length > 0) {
+      const task = this.queue.shift();
+      if (!task) continue;
+      await task();
+    }
+
+    this.isProcessingQueue = false;
+  }
+}

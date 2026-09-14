@@ -1,0 +1,354 @@
+export type CommunParametresUtilisateurResponse = {
+  ressource:                        CommunParametresUtilisateurRessource;
+  listeInformationsEtablissements?: InformationsEtablissement[];
+  listeOnglets:                     PronoteOnglet[];
+  autorisations:                    CommunAutorisations;
+}
+
+export type CompanyParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  ressource:     ParentParametresUtilisateurRessource;
+  autorisations: CompanyAutorisations;
+}
+
+export type CompanyAutorisations = CommunAutorisations & {
+  autoriserEditionToutesOffresStages: boolean;
+}
+
+export type CommunCompteAutorisation = {
+  avecInformationsPersonnelles: boolean;
+}
+
+export type ParentCompteAutorisation = CommunCompteAutorisation & {
+  avecSaisieInfosPersoAutorisations: boolean;
+  avecSaisieInfosPersoCoordonnees:   boolean;
+}
+
+export type CommunAutorisations = {
+  AvecDiscussion:                              boolean;
+  AvecDiscussionPersonnels:                    boolean;
+  AvecDiscussionProfesseurs:                   boolean;
+  autoriserImpressionBulletinReleveBrevet:     boolean;
+  compte:                                      CommunCompteAutorisation;
+  consulterDonneesAdministrativesAutresEleves: boolean;
+  tailleCirconstance:                          number;
+  tailleCommentaire:                           number;
+  tailleMaxDocJointEtablissement:              number;
+  tailleTravailAFaire:                         number;
+  discussionDesactiveeSelonHoraire:            boolean;
+  messageDiscussionDesactiveeSelonHoraire:     string;
+}
+
+export type VieScolaireAutorisations = ProfesseurAutorisations & {
+  AvecSaisieAbsenceRepas:                   boolean;
+  AvecSaisieAbsencesGrilleAbsencesInternat: boolean;
+  AvecSaisieAbsencesToutesPermanences:      boolean;
+  AvecSaisieSurGrilleAppelProf:             boolean;
+  DateSaisieAbsence:                        Date[];
+  avecSaisieDocumentsCasiersIntervenant:    boolean;
+  intendance:                               VieScolaireIntendanceAutorisation;
+  cours:                                    VieScolaireCoursAutorisations;
+}
+
+export type AssistantAutorisations = EleveAutorisations & {
+  AvecDiscussionParents:          boolean;
+  ConsulterFichesResponsables:    boolean;
+  ConsulterIdentiteEleve:         boolean;
+  ConsulterPhotosEleves:          boolean;
+  avecMessageInstantane:          boolean;
+  estDestinataireChat:            boolean;
+  AvecDiscussionAvancee:          boolean;
+  AvecSaisieObservationsParents:  boolean;
+  avecDroitDeconnexionMessagerie: boolean;
+  cours:                          AssistantCoursAutorisations;
+  compte:                         ParentCompteAutorisation;
+}
+
+export type ProfesseurAutorisations = AssistantAutorisations & {
+  AutoriserCommunicationsToutesClasses:    boolean;
+  AvecConsultationDefautCarnet:            boolean;
+  AvecContactVS:                           boolean;
+  AvecDiscussionEleves:                    boolean;
+  AvecPublicationPunitions:                boolean;
+  AvecSaisieAbsence:                       boolean;
+  AvecSaisieActualite:                     boolean;
+  AvecSaisieAgenda:                        boolean;
+  AvecSaisieAppelEtVS:                     boolean;
+  AvecSaisieAttestations:                  boolean;
+  AvecSaisieCours:                         boolean;
+  AvecSaisieDefautCarnet:                  boolean;
+  AvecSaisieDevoirs:                       boolean;
+  AvecSaisieEncouragements:                boolean;
+  AvecSaisieEvaluations:                   boolean;
+  AvecSaisieExclusion:                     boolean;
+  AvecSaisieHorsCours:                     boolean;
+  AvecSaisieMotifRetard:                   boolean;
+  AvecSaisieObservation:                   boolean;
+  AvecSaisiePassageInfirmerie:             boolean;
+  AvecSaisieProjetIndividuel:              boolean;
+  AvecSaisiePunition:                      boolean;
+  AvecSaisieRetard:                        boolean;
+  AvecSaisieSurGrille:                     boolean;
+  ConsulterMemosEleve:                     boolean;
+  SaisirMemos:                             boolean;
+  autoriserImpressionBulletinReleveBrevet: boolean;
+  avecAccesALaListeDesDocumentEleve:       boolean;
+  avecAccesRemplacementsProfs:             boolean;
+  avecAnciennesFeuilleDAppel:              boolean;
+  avecCreationSujetForum:                  boolean;
+  avecModificationForumAPosteriori:        boolean;
+  avecPublicationListeDiffusion:           boolean;
+  avecPublicationPageEtablissement:        boolean;
+  avecSaisieCahierDeTexte:                 boolean;
+  avecSaisieDispense:                      boolean;
+  avecSaisieDocumentsCasiersIntervenant:   boolean;
+  avecSaisieDocumentsCasiersResponsable:   boolean;
+  avecSaisiePieceJointeCahierDeTexte:      boolean;
+  collecterDocsAupresDesEleves:            boolean;
+  collecterDocsAupresDesResponsables:      boolean;
+  cours:                                   ProfesseurCoursAutorisations;
+  gererLaCollecteDeDocuments:              boolean;
+  intendance:                              ProfesseurIntendanceAutorisation;
+  lancerAlertesPPMS:                       boolean;
+  sePorterVolontaireRemplacement:          boolean;
+  voirAbsencesEtRemplacementsProfs:        boolean;
+}
+
+export type AdministrateurAutorisations = VieScolaireAutorisations & {
+  PublierDossierVS:                       boolean;
+  avecCommissions:                        boolean;
+  VoirTousLesEleves:                      boolean;
+  avecCreerMotifIncidentPunitionSanction: boolean;
+  cours:                                  AdministrateurAutorisationsCours;
+}
+
+export type ParentAutorisations = CommunAutorisations & {
+  AvecDeclarerDispenseLongue:              boolean;
+  AvecDeclarerDispensePonctuelle:          boolean;
+  AvecDeclarerUneAbsence:                  boolean;
+  AvecDiscussionParents:                   boolean;
+  accesDecrochage:                         boolean;
+  autoriserImpressionBulletinReleveBrevet: boolean;
+  compte:                                  ParentCompteAutorisation;
+}
+
+export type EleveAutorisations = CommunAutorisations & {
+  tailleMaxRenduTafEleve: number;
+}
+
+export type CommunCoursAutorisations = {
+  domaineConsultationEDT: number[];
+}
+
+export type VieScolaireCoursAutorisations = ProfesseurCoursAutorisations & {
+  domaineModificationCours:                          number[];
+  modifierElevesDetachesSurCoursDeplaceCreneauLibre: boolean;
+}
+
+export type AssistantCoursAutorisations = CommunCoursAutorisations & {
+  afficherElevesDetachesDansCours:                   boolean;
+  modifierElevesDetachesSurCoursDeplaceCreneauLibre: boolean;
+}
+
+export type ProfesseurCoursAutorisations = AssistantCoursAutorisations & {
+  avecMateriel: boolean;
+}
+
+export type AdministrateurAutorisationsCours = VieScolaireCoursAutorisations & {
+  afficherElevesDetachesDansCours: boolean;
+  avecFicheCoursConseil:           boolean;
+}
+
+export type VieScolaireIntendanceAutorisation = {
+  avecDemandeTachesInformatique:   boolean;
+  avecDemandeTravauxIntendance:    boolean;
+  avecExecutionTachesInformatique: boolean;
+  avecExecutionTravauxIntendance:  boolean;
+}
+
+export type ProfesseurIntendanceAutorisation = VieScolaireIntendanceAutorisation & {
+  avecDemandeTachesSecretariat:   boolean;
+  avecExecutionTachesSecretariat: boolean;
+  avecGestionTachesInformatique:  boolean;
+  uniquementMesTachesSecretariat: boolean;
+}
+
+export type EleveParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  ressource:     EleveParametresUtilisateurRessource;
+  autorisations: EleveAutorisations;
+}
+
+export type ParentParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  ressource:     ParentParametresUtilisateurRessource;
+  autorisations: ParentAutorisations;
+}
+
+export type AssistantParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  ressource:     ParentParametresUtilisateurRessource;
+  autorisations: AssistantAutorisations;
+}
+
+export type ProfesseurParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  listeClasses:  ProfesseurPronoteClasse[];
+  listeMatieres: PronoteMatiere[];
+  listeNiveaux:  PronoteLevel[];
+  autorisations: ProfesseurAutorisations;
+}
+
+export type VieScolaireParametresUtilisateurResponse = CommunParametresUtilisateurResponse & {
+  listeClasses:  VieScolairePronoteClasse[];
+  autorisations: VieScolaireAutorisations;
+}
+
+export type AdministrateurParametresUtilisateurResponse =
+  VieScolaireParametresUtilisateurResponse & {
+    autorisations: AdministrateurAutorisations;
+  }
+
+export type ParametresUtilisateurResponse = CommunParametresUtilisateurResponse
+  | EleveParametresUtilisateurResponse
+  | ParentParametresUtilisateurResponse
+  | ProfesseurParametresUtilisateurResponse
+
+export type CommunParametresUtilisateurRessource = PronoteLabel & {
+  Etablissement:             PronoteLabel;
+  G:                         number;
+  listeNumerosUtiles?:       (PronoteLabel & NumeroUtile)[];
+  avecPhoto:                 boolean;
+  photoBase64?:              number;
+  listeOngletsPourPeriodes?: PeriodeOnglet[];
+  listeOngletsPourPiliers?:  PilierOnglet[];
+}
+
+export type EleveParametresUtilisateurRessource = CommunParametresUtilisateurRessource & {
+  classeDEleve:            PronoteLabel;
+  listeClassesHistoriques: ElevePronoteClasse[];
+  listeGroupes:            PronoteLabel[];
+}
+
+export type ParentParametresUtilisateurRessource = CommunParametresUtilisateurRessource & {
+  listeClassesDelegue: Array<PronoteKind & PronoteLabel>;
+  listeRessources:     EleveParametresUtilisateurRessource[];
+}
+
+export type PronoteLevel = PronoteLabel & {
+  estEnseignee: boolean;
+}
+
+export type PronoteMatiere = PronoteLabel & {
+  code:         string;
+  couleur:      string;
+  estEnseignee: boolean;
+  estUtilise?:  boolean;
+}
+
+export type PronoteOnglet = PronoteType & {
+  Onglet?: PronoteType[];
+}
+
+export type PronoteType = {
+  G: number;
+}
+
+export type PilierOnglet = PronoteType & {
+  listePaliers: PronotePalier[];
+}
+
+export type PronotePalier = PronoteLabel & {
+  listePiliers: PronotePilier[];
+}
+
+export type PronotePilier = PronoteLabel & PronoteType & {
+  estPilierLVE:   boolean;
+  estSocleCommun: boolean;
+}
+
+export type PeriodeOnglet = PronoteType & {
+  listePeriodes:    PronotePeriode[];
+  periodeParDefaut: PronoteLabel;
+}
+
+export type PronotePeriode = PronoteLabel & {
+  A:             boolean;
+  GenreNotation: number;
+}
+
+export type ElevePronoteClasse = PronoteKind & PronoteLabel & {
+  AvecFiliere: boolean;
+  AvecNote:    boolean;
+  courant:     boolean;
+}
+
+export type ProfesseurPronoteClasse = PronoteKind & PronoteLabel & {
+  enseigne?:      boolean;
+  estFinDeCycle?: boolean;
+  niveau?:        PronoteLabel;
+  estPrincipal?:  boolean;
+}
+
+export type VieScolairePronoteClasse = PronoteKind & PronoteLabel & {
+  estResponsable?: boolean;
+  niveau?:         PronoteLabel;
+}
+
+export type ParametresUtilisateurRessource = CommunParametresUtilisateurRessource
+  | EleveParametresUtilisateurRessource
+
+export type NumeroUtile = {
+  commentaire:      string;
+  estNrHarcelement: boolean;
+  numeroTelBrut:    string;
+  numeroTelFormate: string;
+  url:              string;
+}
+
+export type PronoteKind = {
+  G: number;
+}
+
+export type PronoteLabel = {
+  label: string;
+  id:    string;
+}
+
+export type InformationsEtablissement = PronoteLabel & {
+  Coordonnees?:                    Coordonnees;
+  LibelleFichierCU?:               string;
+  LibelleFichierRI?:               string;
+  avecFichierCU?:                  boolean;
+  avecFichierRI?:                  boolean;
+  avecInformations?:               boolean;
+  avecReferentsHarcelementPublie?: boolean;
+  listeReferentsHarcelement:       ReferentHarcelement[];
+}
+
+export type Coordonnees = {
+  Adresse1:            string;
+  Adresse2:            string;
+  Adresse3:            string;
+  Adresse4:            string;
+  CodePostal:          string;
+  EMailPersonnalise1?: MailEtablissement;
+  EMailPersonnalise2?: MailEtablissement;
+  LibellePostal:       string;
+  LibelleVille:        string;
+  NumPersonnalise1?:   NumeroEtablissement;
+  NumPersonnalise2?:   NumeroEtablissement;
+  NumPersonnalise3?:   NumeroEtablissement;
+  Pays:                string;
+  Province:            string;
+  SiteInternet:        string;
+}
+
+export type NumeroEtablissement = {
+  NomPersonnalise: string;
+  Numero:          string;
+}
+
+export type MailEtablissement = {
+  Mail:            string;
+  NomPersonnalise: string;
+}
+
+export type ReferentHarcelement = PronoteLabel & {
+  avecDiscussion: boolean;
+}

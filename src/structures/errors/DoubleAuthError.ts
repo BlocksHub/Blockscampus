@@ -1,0 +1,18 @@
+import type { AccountSecurity } from "../authentication/AccountSecurity";
+
+export class DoubleAuthError extends Error {
+  public readonly context;
+
+  public readonly options?;
+
+  constructor(
+    message: string,
+    context: AccountSecurity,
+    options?: { pin?: string }
+  ) {
+    super(message);
+    this.name = "DoubleAuthError";
+    this.context = context;
+    this.options = options;
+  }
+}

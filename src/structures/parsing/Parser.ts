@@ -1,0 +1,93 @@
+import type { StudentUserSettings } from "@/routes/ParametresUtilisateurs/Student";
+import { ParsingError } from "@/structures/errors/ParsingError";
+import { DateParser } from "@/structures/parsing/DateParser";
+import { NumberSet } from "@/structures/parsing/NumberSet";
+import type { Ressource } from "@/types/timetable";
+import type { Class } from "@/types/user";
+
+export class Parser {
+  private static createDualCaseKey(key: string, value: unknown) {
+    const capitalized = key.charAt(0).toUpperCase() + key.substring(1);
+    return { [key]: value, [capitalized]: value };
+  }
+
+  static encodeValue(key: string, value: string) {
+    return this.createDualCaseKey(key, value);
+  }
+
+  static encodeType(key: string, type: number, value: string) {
+    return this.createDualCaseKey(key, { _T: type, V: value });
+  }
+
+  static encodeKind(key: string, kind: number, id: string) {
+    return this.createDualCaseKey(key, { G: kind, N: id });
+  }
+
+  static toRessource(value: Class | StudentUserSettings): Ressource {
+    return { G: value.kind, N: value.id}
+  }
+
+  static parse<T>(obj: unknown): T {
+    if (obj === null || typeof obj !== "object") {
+      return obj as T;
+    }
+
+    const o = obj as Record<string, unknown>;
+
+    const hasType = Object.prototype.hasOwnProperty.call(o, "_T");
+    const hasLabel = Object.prototype.hasOwnProperty.call(o, "L");
+    const hasId = Object.prototype.hasOwnProperty.call(o, "N");
+    const hasValue = Object.prototype.hasOwnProperty.call(o, "V");
+
+    if (hasLabel) {
+      o["label"] = o["L"]
+      delete o["L"]
+    }
+
+    if (hasId) {
+      o["id"] = o["N"]
+      delete o["N"]
+    }
+
+    if (hasType && hasValue) {
+      const result = this.handleType(o["_T"] as number, o["V"]);
+      return result as T;
+    }
+
+    if (Array.isArray(o)) {
+      for (let i = 0; i < (o as unknown[]).length; i++) {
+        (o as unknown[])[i] = this.parse((o as unknown[])[i]);
+      }
+      return o as T;
+    }
+
+    for (const [key, value] of Object.entries(o)) {
+      o[key] = this.parse(value);
+    }
+
+    return o as T;
+  }
+
+  static handleType(t: number, v: unknown): unknown {
+    switch (t) {
+      case 10:
+        // eslint-disable-next-line no-case-declarations
+        const r = Number((v as string).replaceAll(",", "."));
+        return isNaN(r) ? v : r;
+      case 26:
+      case 11:
+      case 8:
+        return NumberSet.parse(v as string);
+      case 7:
+        return DateParser.parse(v as string);
+      case 24:
+      case 25:
+      case 21:
+      case 23:
+      case 27:
+        return this.parse(v);
+      default:
+        throw new ParsingError(t, v);
+    }
+  }
+}

@@ -1,0 +1,41 @@
+import { CommonUserSettings } from "@/routes/ParametresUtilisateurs/Common";
+import { Response } from "@/structures/network/Response";
+import { StudentUserSettings } from "@/routes/ParametresUtilisateurs/Student";
+import type { EleveParametresUtilisateurResponse, ParentParametresUtilisateurResponse } from "@/types/responses/user";
+import type { CommonClass, ParentPermissions } from "@/types/user";
+
+export class ParentUserSettings extends CommonUserSettings<ParentParametresUtilisateurResponse> {
+  public override get permissions(): ParentPermissions {
+    const common = super.permissions
+    const authorizations = this.raw.data.autorisations as ParentParametresUtilisateurResponse["autorisations"]
+
+    return {
+      ...common,
+      canChat:                           authorizations.AvecDiscussion,
+      canEditPersonalInfoAuthorizations: authorizations.compte.avecSaisieInfosPersoAutorisations,
+      canEditPersonalInfoCoordinates:    authorizations.compte.avecSaisieInfosPersoCoordonnees,
+      canChatWithParents:                authorizations.AvecDiscussionParents
+    }
+  }
+
+  public get classes(): CommonClass[] {
+    return this.ressource.listeClassesDelegue.map((i) => ({
+      kind:  i.G,
+      id:    i.id,
+      label: i.label
+    }))
+  }
+
+  public get childrens(): StudentUserSettings[] {
+    return this.ressource.listeRessources.map((children) => new StudentUserSettings(
+      this.session,
+      {
+        ...this.raw,
+        data: { ressource: children }
+      } as Response<EleveParametresUtilisateurResponse>,
+      children,
+      this.settings
+    )
+    )
+  }
+}
