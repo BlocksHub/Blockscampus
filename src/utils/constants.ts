@@ -1,5 +1,5 @@
 export const USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 PRONOTE Mobile APP Version/2.0.11"
-export const INFO_MOBILE_ID = "0D264427-EEFC-4810-A9E9-346942A862A4";
+export const INFO_MOBILE_ID = "4DE41802-AAE7-4F2B-B9A6-183E711A5395";
 export const BYPASS_ID = "A6ABB224-12DD-4E31-AD3E-8A39A1C2C335"
 
 export const EXPONENT_1024 = "010001";
