@@ -165,7 +165,9 @@ export class Request {
     }
 
     const response = await requester(this.endpoint, init);
-
+    if(!response.ok) {
+      throw new NetworkError(`Invalid response from server: excepted status code 200, got ${response.status} instead.`, response.status);
+    }
     const headers = Object.fromEntries(response.headers.entries());
     const contentType = headers["content-type"]
     const text = await response.text();
