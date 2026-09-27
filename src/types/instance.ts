@@ -1,14 +1,6 @@
 export type SchoolInfo = {
-  longName:  string;
   shortName: string;
   logoUrl?:  string;
-}
-
-export type PublicationSettings = {
-  defaultDelayDays:           number;
-  parentDelayDays:            number;
-  hasDelayedGradePublication: boolean;
-  hasDelayedEvalPublication:  boolean;
 }
 
 export type GradingSettings = {
@@ -17,20 +9,13 @@ export type GradingSettings = {
 }
 
 export type EnvironmentSettings = {
-  serverDate:               Date;
-  isShowedInENT:            boolean;
   isAccessibilityCompliant: boolean;
-  isForNewCaledonia:        boolean;
   isHostedInFrance:         boolean;
 }
 
 export type InstancePermissions = {
-  parentCanChangePassword?:                    boolean;
   allowConnectionInfoRecovery?:                boolean;
   isForumEnabled?:                             boolean;
-  isParentMessagingEnabled?:                   boolean;
-  isBlogEnabled?:                              boolean;
-  isExcellencePathwayManagementEnabled?:       boolean;
   canChat?:                                    boolean;
   isChatDisabledBySchedule?:                   boolean;
   canChatWithStaff?:                           boolean;
@@ -83,31 +68,21 @@ export type ScheduleSettings = {
   seatsPerDay:           number;
   seatsPerHour:          number;
   sequenceDuration:      number;
-  hasFullAfternoonHours: boolean;
-  nextOpenDay:           Date;
-  openDaysPerCycle:      number;
+  openDays:              Array<number>;
+  openDaysNumber:        number;
   firstWeek:             number;
   firstMonday:           Date;
   firstDate:             Date;
   lastDate:              Date;
-  recreations:           Recreation[];
   publicHolidays:        PublicHoliday[];
 }
 
 export type PublicHoliday = {
-  label: string;
   from:  Date;
   to:    Date;
 }
 
-export type Recreation = {
-  seat:  number;
-  label: string;
-}
-
 export type EvaluationSettings = {
-  acquisitionLevels:    AcquisitionLevel[];
-  hasEvaluationHistory: boolean;
   qcm:                  QCMSettings;
 }
 
@@ -123,23 +98,6 @@ export type Language = {
   label: string;
 }
 
-export type Period = {
-  label:     string;
-  startDate: Date;
-  endDate:   Date;
-  id:        string;
-}
-
-export type AcquisitionLevel = {
-  label:                           string;
-  abbreviation?:                   string;
-  color?:                          string;
-  weight?:                         number;
-  isAcquired?:                     boolean;
-  countForSuccessRateCalculation?: boolean;
-  pointsForBrevet?:                number;
-}
-
 export type Ressources = {
   confidentialityPolicy?:    string;
   indexEducationWebsite?:    string;
@@ -148,6 +106,5 @@ export type Ressources = {
   faqTwoFactorRegistration?: string;
   securityTutorialVideo?:    string;
   registerDevicesTutorial?:  string;
-  canope?:                   string;
   accessibilityDeclaration?: string;
 }
