@@ -41,21 +41,28 @@ export type FonctionsParametresRawResponse = {
     DerniereDate: string;
 
     JoursOuvres: string;
+    NombreJoursOuvres: number;
+
+    SemainesFeriees: string;
+    JoursFeries: string;
 
     PlacesParHeure: number;
     PlacesParJour: number;
     DureeSequence: number;
+    Version: string;
   };
 
   parametres: {
-    Divers: Array<{
+    Divers: [{
       NomEtablissement: string;
-    }>;
+    }];
 
     PlanningGeneral: Array<{
       NumeroPremiereSemaine: number;
     }>;
   };
+
+  dateDemo: string | null;
 }
 
 
