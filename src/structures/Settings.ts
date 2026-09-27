@@ -4,26 +4,48 @@ import type {
   EvaluationSettings,
   GradingSettings,
   Language,
-  Period,
   InstancePermissions,
-  PublicationSettings,
   Ressources,
   ScheduleSettings,
-  SchoolInfo
+  SchoolInfo,
+  PublicHoliday
 } from "@/types/instance";
 import type { Session } from "@/structures/Session";
 import { RSA } from "@/structures/crypto/RSA";
 import { Request } from "@/structures/network/Request";
 import type { FonctionsParametresRawResponse } from "@/types/responses/instance";
 
+function dateWeek(a: Date) {
+  var d = new Date(a);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 3  -(d.getDay() + 6) % 7);
+  var w = new Date(d.getFullYear(), 0, 4);
+  return Number(('0' + (1 + Math.round(((d.getTime() - w.getTime() ) / 86400000 - 3 + (w.getDay() + 6) % 7) / 7))).slice(-2));
+}
+
+function pronoteDayToDate(
+  premierLundi: string,
+  jour: number
+): Date {
+  const [day, month, year] = premierLundi.split("/").map(Number) as [
+    number,
+    number,
+    number
+  ];
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  date.setUTCDate(date.getUTCDate() + jour - 1);
+
+  return date;
+}
+
 export class Settings {
   constructor(
-    public productName: string,
-    public version: number[],
+    public version: string,
     public isDemo: boolean,
     public school: SchoolInfo,
     public schoolYear: number[],
-    public publication: PublicationSettings,
     public grading: GradingSettings,
     public availableLanguages: Language[],
     public currentLanguage: Language,
@@ -32,7 +54,6 @@ export class Settings {
     public evaluation: EvaluationSettings,
     public permissions: InstancePermissions,
     public ressources?: Ressources,
-    public periods?: Period[]
   ) {}
 
   public static async load(session: Session): Promise<Settings> {
@@ -50,70 +71,67 @@ export class Settings {
       .data;
       console.log(response);
 
-    const g = response.General;
+    const g = response.parametreGeneral;
     const languages: Language[] = g.listeLangues.map((l) => (
       { id: l.langID, label: l.description }
     ));
     const currentLang = languages.find((l) => l.id === +g.langID) ?? languages[0];
+    const schoolYear = []
+    schoolYear.push(g.PremierLundi.split("/")[2] as unknown as number);
+    schoolYear.push(g.DerniereDate.split("/")[2] as unknown as number);
+
+    const holidays: PublicHoliday[] = [];
+
+    g.JoursFeries.replace("[", "").replace("]", "").split(",").map((h) => {
+      if(h.includes("..")) {
+        const [start, end] = h.split("..");
+        const civilStartDay = pronoteDayToDate(g.PremierLundi, Number(start));
+        const civilEndDay = pronoteDayToDate(g.PremierLundi, Number(end));
+        holidays.push({
+          from: civilStartDay,
+          to: civilEndDay
+        })
+      }
+      else {
+        const civilDay = pronoteDayToDate(g.PremierLundi, Number(h));
+        holidays.push({
+          from: civilDay,
+          to: civilDay
+        })
+      }
+    })
 
     return new Settings(
-      g.nomProduit,
-      response.tableauVersion,
-      !!response.DateDemo,
+      g.Version,
+      !!response.dateDemo,
       {
-        longName:  g.NomEtablissementConnexion,
-        shortName: g.NomEtablissement,
+        shortName: response.parametres.Divers[0].NomEtablissement,
         logoUrl:   g.urlLogo
       },
-      g.AnneeScolaire.split("-").map(Number),
+      schoolYear,
       {
-        defaultDelayDays:           g.NbJDecalageDatePublicationParDefaut,
-        parentDelayDays:            g.NbJDecalagePublicationAuxParents,
-        hasDelayedEvalPublication:  g.AvecAffichageDecalagePublicationEvalsAuxParents,
-        hasDelayedGradePublication: g.AvecAffichageDecalagePublicationNotesAuxParents
-      },
-      {
-        scale:    g.BaremeNotation,
-        maxGrade: g.BaremeMaxDevoirs
+        scale:    g.baremeNotation,
+        maxGrade: g.baremeMaxDevoirs
       },
       languages,
       currentLang!,
       {
-        serverDate:               new Date(response.DateServeurHttp),
-        isShowedInENT:            response.estAfficheDansENT,
         isAccessibilityCompliant: !!g.accessibiliteNonConforme,
-        isForNewCaledonia:        response.pourNouvelleCaledonie,
         isHostedInFrance:         g.estHebergeEnFrance
       },
       {
         seatsPerDay:           g.PlacesParJour,
         seatsPerHour:          g.PlacesParHeure,
         sequenceDuration:      g.DureeSequence,
-        hasFullAfternoonHours: g.AvecHeuresPleinesApresMidi,
-        nextOpenDay:           new Date(g.JourOuvre),
-        openDaysPerCycle:      g.joursOuvresParCycle,
-        firstWeek:             g.premierJourSemaine,
+        openDays:              g.JoursOuvres.split("").map((d) => +d),
+        openDaysNumber:        g.NombreJoursOuvres,
+        firstWeek:             dateWeek(new Date(g.PremierLundi)),
         firstMonday:           new Date(g.PremierLundi),
-        firstDate:             new Date(g.PremiereDate),
+        firstDate:             new Date(g.PremierLundi),
         lastDate:              new Date(g.DerniereDate),
-        recreations:           g.recreations.map((r) => ({ seat: r.place, label: r.label })),
-        publicHolidays:        g.listeJoursFeries.map((j) => ({
-          label: j.label,
-          from:  new Date(j.dateDebut),
-          to:    new Date(j.dateFin)
-        }))
+        publicHolidays:        holidays,
       },
       {
-        acquisitionLevels: g.ListeNiveauxDAcquisitions.map((l) => ({
-          label:                          l.label,
-          abbreviation:                   l.abbreviation,
-          color:                          l.couleur,
-          weight:                         l.positionJauge,
-          isAcquired:                     l.estAcqui,
-          countForSuccessRateCalculation: l.estNotantPourTxReussite,
-          pointsForBrevet:                l.nombrePointsBrevet
-        })),
-        hasEvaluationHistory: g.AvecEvaluationHistorique,
         qcm:                  {
           minScore:  g.minBaremeQuestionQCM,
           maxScore:  g.maxBaremeQuestionQCM,
@@ -122,30 +140,19 @@ export class Settings {
         }
       },
       {
-        parentCanChangePassword:              g.parentAutoriseChangerMDP,
         allowConnectionInfoRecovery:          g.AvecRecuperationInfosConnexion,
-        isBlogEnabled:                        g.activerBlog,
         isForumEnabled:                       g.avecForum,
-        isParentMessagingEnabled:             g.ActivationMessagerieEntreParents,
-        isExcellencePathwayManagementEnabled: g.GestionParcoursExcellence
       },
       {
-        confidentialityPolicy:    response.urlConfidentialite,
+        confidentialityPolicy:    g.urlPolitiqueConfidentialite,
         indexEducationWebsite:    g.urlSiteIndexEducation,
-        hostingInfo:              g.urlSiteInfosHebergement,
+        hostingInfo:              g.urlInfosHebergement,
         support:                  g.UrlAide,
         faqTwoFactorRegistration: g.urlFAQEnregistrementDoubleAuth,
         securityTutorialVideo:    g.urlTutoVideoSecurite,
         registerDevicesTutorial:  g.urlTutoEnregistrerAppareils,
-        canope:                   g.urlCanope,
         accessibilityDeclaration: session.source + g.urlDeclarationAccessibilite
       },
-      g.ListePeriodes.map((period) => ({
-        label:     period.label,
-        startDate: period.dateDebut,
-        endDate:   period.dateFin,
-        id:        period.id
-      }))
     )
   }
 }
